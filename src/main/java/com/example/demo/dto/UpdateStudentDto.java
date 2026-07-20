@@ -3,6 +3,7 @@ package com.example.demo.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class UpdateStudentDto {
     @NotBlank(message = "Name is required")
@@ -14,6 +15,9 @@ public class UpdateStudentDto {
 
     @Min(value = 1, message = "Age must be greater than 0")
     private Integer age;
+
+    @NotNull
+    private Long schoolClassId;
 
     public UpdateStudentDto() {
     }
@@ -46,5 +50,9 @@ public class UpdateStudentDto {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Long getSchoolClassId() {
+        return schoolClassId;
     }
 }

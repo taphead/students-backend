@@ -18,6 +18,11 @@ public class Student {
     @Column(nullable = false)
     private Integer age;
 
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private SchoolClass schoolClass;
+
     public Student() {
     }
 
@@ -64,5 +69,9 @@ public class Student {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public void setSchoolClass(SchoolClass schoolClass) {
+        this.schoolClass = schoolClass;
     }
 }
