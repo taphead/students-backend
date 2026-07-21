@@ -74,4 +74,5 @@ public class Student {
     public void setSchoolClass(SchoolClass schoolClass) {
         this.schoolClass = schoolClass;
     }
+
 }

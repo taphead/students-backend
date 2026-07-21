@@ -26,6 +26,10 @@ public class SchoolClass {
     )
     private List<Subject> subjects = new ArrayList<>();
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
