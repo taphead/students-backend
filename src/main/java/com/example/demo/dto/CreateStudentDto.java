@@ -23,10 +23,11 @@ public class CreateStudentDto {
     public CreateStudentDto() {
     }
 
-    public CreateStudentDto(String name, String email, Integer age) {
+    public CreateStudentDto(String name, String email, Integer age, Long schoolClassId) {
         this.name = name;
         this.email = email;
         this.age = age;
+        this.schoolClassId = schoolClassId;
     }
 
     public String getName() {
@@ -55,5 +56,9 @@ public class CreateStudentDto {
 
     public Long getSchoolClassId() {
         return schoolClassId;
+    }
+
+    public void setSchoolClassId(Long schoolClassId) {
+        this.schoolClassId = schoolClassId;
     }
 }
