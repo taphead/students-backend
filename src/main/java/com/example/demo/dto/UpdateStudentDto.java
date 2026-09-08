@@ -55,4 +55,8 @@ public class UpdateStudentDto {
     public Long getSchoolClassId() {
         return schoolClassId;
     }
+
+    public void setSchoolClassId(Long schoolClassId) {
+        this.schoolClassId = schoolClassId;
+    }
 }

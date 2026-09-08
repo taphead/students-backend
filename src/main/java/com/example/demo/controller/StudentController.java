@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CreateStudentDto;
+import com.example.demo.dto.StudentResponseDto;
 import com.example.demo.dto.UpdateStudentDto;
-import com.example.demo.entity.Student;
 import com.example.demo.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,23 +21,23 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentResponseDto> getAllStudents() {
         return studentService.getAllStudents();
     }
 
     @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id) {
+    public StudentResponseDto getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Student createStudent(@Valid @RequestBody CreateStudentDto dto) {
+    public StudentResponseDto createStudent(@Valid @RequestBody CreateStudentDto dto) {
         return studentService.createStudent(dto);
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @Valid @RequestBody UpdateStudentDto dto) {
+    public StudentResponseDto updateStudent(@PathVariable Long id, @Valid @RequestBody UpdateStudentDto dto) {
         return studentService.updateStudent(id, dto);
     }
 

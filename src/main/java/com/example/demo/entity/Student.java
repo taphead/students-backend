@@ -2,6 +2,9 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "students")
 public class Student {
@@ -75,4 +78,7 @@ public class Student {
         this.schoolClass = schoolClass;
     }
 
+    public SchoolClass getSchoolClass() {
+        return schoolClass;
+    }
 }

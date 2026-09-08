@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CreateStudentDto;
+import com.example.demo.dto.StudentResponseDto;
 import com.example.demo.dto.UpdateStudentDto;
 import com.example.demo.entity.SchoolClass;
 import com.example.demo.entity.Student;
@@ -11,64 +12,155 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 
 @Service
 public class StudentService {
+
     private final StudentRepository studentRepository;
     public final SchoolClassRepository schoolClassRepository;
 
-    // Constructor injection
     public StudentService(StudentRepository studentRepository, SchoolClassRepository schoolClassRepository) {
         this.studentRepository = studentRepository;
         this.schoolClassRepository = schoolClassRepository;
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+
+
+    public List<StudentResponseDto> getAllStudents() {
+        return studentRepository.findAll().stream().map(this::mapToResponseDto).toList();
     }
 
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-    }
+    public StudentResponseDto getStudentById(Long id) {
 
-    public Student createStudent(CreateStudentDto dto) {
-
-        SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId())
+        Student student = studentRepository
+                .findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Class not found with id: " + dto.getSchoolClassId()));
+                        new RuntimeException(
+                                "Student not found with id: " + id
+                        )
+                );
+
+        return mapToResponseDto(student);
+    }
+
+    public StudentResponseDto createStudent(
+            CreateStudentDto dto
+    ) {
+
+        SchoolClass schoolClass =
+                schoolClassRepository
+                        .findById(dto.getSchoolClassId())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "School class not found with id: "
+                                                + dto.getSchoolClassId()
+                                )
+                        );
+
 
         Student student = new Student();
-        student.setName(dto.getName());
-        student.setEmail(dto.getEmail());
-        student.setAge(dto.getAge());
-        student.setSchoolClass(schoolClass);
-
-        return studentRepository.save(student);
-    }
-
-    public Student updateStudent(Long id, UpdateStudentDto dto) {
-
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Student not found with id: " + id));
-
-        SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Class not found with id: " + dto.getSchoolClassId()));
 
         student.setName(dto.getName());
         student.setEmail(dto.getEmail());
         student.setAge(dto.getAge());
+
         student.setSchoolClass(schoolClass);
 
-        return studentRepository.save(student);
+
+        Student savedStudent =
+                studentRepository.save(student);
+
+
+        return mapToResponseDto(savedStudent);
     }
+
+    public StudentResponseDto updateStudent(
+            Long id,
+            UpdateStudentDto dto
+    ) {
+
+        Student student =
+                studentRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Student not found with id: " + id
+                                )
+                        );
+
+        if (dto.getName() != null) {
+
+            student.setName(dto.getName());
+        }
+
+        if (dto.getEmail() != null) {
+
+            student.setEmail(dto.getEmail());
+        }
+
+        if (dto.getAge() != null) {
+
+            student.setAge(dto.getAge());
+        }
+
+        if (dto.getSchoolClassId() != null) {
+
+            SchoolClass schoolClass =
+                    schoolClassRepository
+                            .findById(dto.getSchoolClassId())
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "School class not found with id: "
+                                                    + dto.getSchoolClassId()
+                                    )
+                            );
+
+            student.setSchoolClass(schoolClass);
+        }
+
+
+        Student updatedStudent =
+                studentRepository.save(student);
+
+
+        return mapToResponseDto(updatedStudent);
+    }
+
 
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
         studentRepository.delete(student);
+    }
+
+    private StudentResponseDto mapToResponseDto(
+            Student student
+    ) {
+
+        Long schoolClassId = null;
+
+
+        if (student.getSchoolClass() != null) {
+
+            schoolClassId =
+                    student
+                            .getSchoolClass()
+                            .getId();
+        }
+
+
+        return new StudentResponseDto(
+
+                student.getId(),
+
+                student.getName(),
+
+                student.getEmail(),
+
+                student.getAge(),
+
+                schoolClassId
+        );
     }
 }
