@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CreateSubjectDto;
+import com.example.demo.dto.SubjectResponseDto;
 import com.example.demo.dto.UpdateSubjectDto;
 import com.example.demo.entity.Subject;
 import com.example.demo.service.SubjectService;
@@ -22,25 +23,25 @@ public class SubjectController {
     }
 
     @GetMapping
-    public List<Subject> getAllSubjects() {
+    public List<SubjectResponseDto> getAllSubjects() {
         return subjectService.getAllSubjects();
     }
 
     @GetMapping("/{id}")
-    public Subject getSubjectById(@PathVariable Long id) {
+    public SubjectResponseDto getSubjectById(@PathVariable Long id) {
         return subjectService.getSubjectById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Subject createSubject(
+    public SubjectResponseDto createSubject(
             @Valid @RequestBody CreateSubjectDto dto) {
 
         return subjectService.createSubject(dto);
     }
 
     @PutMapping("/{id}")
-    public Subject updateSubject(
+    public SubjectResponseDto updateSubject(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSubjectDto dto) {
 

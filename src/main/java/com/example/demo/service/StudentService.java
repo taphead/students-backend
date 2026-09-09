@@ -27,7 +27,6 @@ public class StudentService {
     }
 
 
-
     public List<StudentResponseDto> getAllStudents() {
         return studentRepository.findAll().stream().map(this::mapToResponseDto).toList();
     }

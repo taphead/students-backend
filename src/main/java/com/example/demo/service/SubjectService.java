@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.CreateSubjectDto;
+import com.example.demo.dto.SubjectResponseDto;
 import com.example.demo.dto.UpdateSubjectDto;
+import com.example.demo.entity.SchoolClass;
 import com.example.demo.entity.Subject;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SubjectRepository;
@@ -18,25 +20,34 @@ public class SubjectService {
         this.subjectRepository = subjectRepository;
     }
 
-    public List<Subject> getAllSubjects() {
-        return subjectRepository.findAll();
+    public List<SubjectResponseDto> getAllSubjects() {
+        return subjectRepository
+                .findAll()
+                .stream()
+                .map(this::mapToResponseDto)
+                .toList();
     }
 
-    public Subject getSubjectById(Long id) {
-        return subjectRepository.findById(id)
+    public SubjectResponseDto getSubjectById(Long id) {
+        Subject subject = subjectRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Subject not found with id: " + id));
+
+        return mapToResponseDto(subject);
     }
 
-    public Subject createSubject(CreateSubjectDto dto) {
+    public SubjectResponseDto createSubject(CreateSubjectDto dto) {
 
         Subject subject = new Subject();
         subject.setName(dto.getName());
 
-        return subjectRepository.save(subject);
+        Subject savedSubject = subjectRepository.save(subject);
+
+        return mapToResponseDto(savedSubject);
     }
 
-    public Subject updateSubject(Long id, UpdateSubjectDto dto) {
+    public SubjectResponseDto updateSubject(Long id, UpdateSubjectDto dto) {
 
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() ->
@@ -44,7 +55,8 @@ public class SubjectService {
 
         subject.setName(dto.getName());
 
-        return subjectRepository.save(subject);
+        Subject updatedSubject = subjectRepository.save(subject);
+        return mapToResponseDto(updatedSubject);
     }
 
     public void deleteSubject(Long id) {
@@ -54,5 +66,27 @@ public class SubjectService {
                         new ResourceNotFoundException("Subject not found with id: " + id));
 
         subjectRepository.delete(subject);
+    }
+
+    private SubjectResponseDto mapToResponseDto(
+            Subject subject
+    ) {
+
+        List<Long> classIds =
+                subject
+                        .getClasses()
+                        .stream()
+                        .map(SchoolClass::getId)    // schoolClass -> schoolClass.getId()
+                        .toList();
+
+
+        return new SubjectResponseDto(
+
+                subject.getId(),
+
+                subject.getName(),
+
+                classIds
+        );
     }
 }
