@@ -46,4 +46,8 @@ public class SchoolClass {
         return students;
     }
 
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
 }

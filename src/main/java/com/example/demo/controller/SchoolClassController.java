@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CreateSchoolClassDto;
+import com.example.demo.dto.SchoolClassResponseDto;
 import com.example.demo.dto.UpdateSchoolClassDto;
 import com.example.demo.entity.SchoolClass;
 import com.example.demo.service.SchoolClassService;
@@ -21,37 +22,32 @@ public class SchoolClassController {
         this.schoolClassService = schoolClassService;
     }
 
-    // GET /classes
     @GetMapping
-    public List<SchoolClass> getAllClasses() {
+    public List<SchoolClassResponseDto> getAllClasses() {
         return schoolClassService.getAllClasses();
     }
 
-    // GET /classes/{id}
     @GetMapping("/{id}")
-    public SchoolClass getClassById(@PathVariable Long id) {
+    public SchoolClassResponseDto getClassById(@PathVariable Long id) {
         return schoolClassService.getClassById(id);
     }
 
-    // POST /classes
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SchoolClass createClass(
+    public SchoolClassResponseDto createClass(
             @Valid @RequestBody CreateSchoolClassDto dto) {
 
         return schoolClassService.createClass(dto);
     }
 
-    // PUT /classes/{id}
     @PutMapping("/{id}")
-    public SchoolClass updateClass(
+    public SchoolClassResponseDto updateClass(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSchoolClassDto dto) {
 
         return schoolClassService.updateClass(id, dto);
     }
 
-    // DELETE /classes/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteClass(@PathVariable Long id) {
