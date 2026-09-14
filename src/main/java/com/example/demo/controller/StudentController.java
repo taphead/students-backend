@@ -5,10 +5,10 @@ import com.example.demo.dto.StudentResponseDto;
 import com.example.demo.dto.UpdateStudentDto;
 import com.example.demo.service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/students")
@@ -21,8 +21,9 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<StudentResponseDto> getAllStudents() {
-        return studentService.getAllStudents();
+    public Page<StudentResponseDto> getAllStudents(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
+        return studentService.getAllStudents(page, size);
     }
 
     @GetMapping("/{id}")

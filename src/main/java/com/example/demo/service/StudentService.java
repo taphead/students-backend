@@ -8,11 +8,10 @@ import com.example.demo.entity.Student;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SchoolClassRepository;
 import com.example.demo.repository.StudentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -26,37 +25,23 @@ public class StudentService {
         this.schoolClassRepository = schoolClassRepository;
     }
 
+    public Page<StudentResponseDto> getAllStudents(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Student> studentPage = studentRepository.findAll(pageable);
 
-    public List<StudentResponseDto> getAllStudents() {
-        return studentRepository.findAll().stream().map(this::mapToResponseDto).toList();
+        return studentPage.map(this::mapToResponseDto);
     }
 
     public StudentResponseDto getStudentById(Long id) {
 
-        Student student = studentRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Student not found with id: " + id
-                        )
-                );
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
 
         return mapToResponseDto(student);
     }
 
-    public StudentResponseDto createStudent(
-            CreateStudentDto dto
-    ) {
+    public StudentResponseDto createStudent(CreateStudentDto dto) {
 
-        SchoolClass schoolClass =
-                schoolClassRepository
-                        .findById(dto.getSchoolClassId())
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "School class not found with id: "
-                                                + dto.getSchoolClassId()
-                                )
-                        );
+        SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId()).orElseThrow(() -> new RuntimeException("School class not found with id: " + dto.getSchoolClassId()));
 
 
         Student student = new Student();
@@ -68,26 +53,15 @@ public class StudentService {
         student.setSchoolClass(schoolClass);
 
 
-        Student savedStudent =
-                studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
 
 
         return mapToResponseDto(savedStudent);
     }
 
-    public StudentResponseDto updateStudent(
-            Long id,
-            UpdateStudentDto dto
-    ) {
+    public StudentResponseDto updateStudent(Long id, UpdateStudentDto dto) {
 
-        Student student =
-                studentRepository
-                        .findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Student not found with id: " + id
-                                )
-                        );
+        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
 
         if (dto.getName() != null) {
 
@@ -106,46 +80,31 @@ public class StudentService {
 
         if (dto.getSchoolClassId() != null) {
 
-            SchoolClass schoolClass =
-                    schoolClassRepository
-                            .findById(dto.getSchoolClassId())
-                            .orElseThrow(() ->
-                                    new RuntimeException(
-                                            "School class not found with id: "
-                                                    + dto.getSchoolClassId()
-                                    )
-                            );
+            SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId()).orElseThrow(() -> new RuntimeException("School class not found with id: " + dto.getSchoolClassId()));
 
             student.setSchoolClass(schoolClass);
         }
 
 
-        Student updatedStudent =
-                studentRepository.save(student);
+        Student updatedStudent = studentRepository.save(student);
 
 
         return mapToResponseDto(updatedStudent);
     }
-
 
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
         studentRepository.delete(student);
     }
 
-    private StudentResponseDto mapToResponseDto(
-            Student student
-    ) {
+    private StudentResponseDto mapToResponseDto(Student student) {
 
         Long schoolClassId = null;
 
 
         if (student.getSchoolClass() != null) {
 
-            schoolClassId =
-                    student
-                            .getSchoolClass()
-                            .getId();
+            schoolClassId = student.getSchoolClass().getId();
         }
 
 
@@ -159,7 +118,6 @@ public class StudentService {
 
                 student.getAge(),
 
-                schoolClassId
-        );
+                schoolClassId);
     }
 }
