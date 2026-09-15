@@ -11,6 +11,7 @@ import com.example.demo.repository.StudentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -25,8 +26,21 @@ public class StudentService {
         this.schoolClassRepository = schoolClassRepository;
     }
 
-    public Page<StudentResponseDto> getAllStudents(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<StudentResponseDto> getAllStudents(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+        Sort sort;
+
+        if (direction.equalsIgnoreCase("desc")) {
+            sort = Sort.by(sortBy).descending();
+        } else {
+            sort = Sort.by(sortBy).ascending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<Student> studentPage = studentRepository.findAll(pageable);
 
         return studentPage.map(this::mapToResponseDto);

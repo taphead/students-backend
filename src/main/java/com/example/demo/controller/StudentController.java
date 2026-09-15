@@ -22,8 +22,11 @@ public class StudentController {
 
     @GetMapping
     public Page<StudentResponseDto> getAllStudents(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        return studentService.getAllStudents(page, size);
+                                                   @RequestParam(defaultValue = "10") int size,
+                                                   @RequestParam(defaultValue = "id") String sortBy,
+                                                   @RequestParam(defaultValue = "asc") String direction) {
+
+        return studentService.getAllStudents(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
