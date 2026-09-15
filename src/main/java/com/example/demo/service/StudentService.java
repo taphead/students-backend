@@ -14,12 +14,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 
 @Service
 public class StudentService {
 
     private final StudentRepository studentRepository;
     public final SchoolClassRepository schoolClassRepository;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "id",
+            "name",
+            "email",
+            "age"
+    );
 
     public StudentService(StudentRepository studentRepository, SchoolClassRepository schoolClassRepository) {
         this.studentRepository = studentRepository;
@@ -32,6 +40,10 @@ public class StudentService {
             String sortBy,
             String direction
     ) {
+        if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid Sort Field: " + sortBy);
+        }
+
         Sort sort;
 
         if (direction.equalsIgnoreCase("desc")) {
