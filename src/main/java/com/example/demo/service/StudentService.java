@@ -28,6 +28,10 @@ public class StudentService {
             "email",
             "age"
     );
+    private static final Set<String> ALLOWED_DIRECTION_FIELDS = Set.of(
+            "asc",
+            "desc"
+    );
 
     public StudentService(StudentRepository studentRepository, SchoolClassRepository schoolClassRepository) {
         this.studentRepository = studentRepository;
@@ -40,8 +44,13 @@ public class StudentService {
             String sortBy,
             String direction
     ) {
+
         if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid Sort Field: " + sortBy);
+        }
+
+        if (!ALLOWED_DIRECTION_FIELDS.contains(direction.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid Direction: " + direction);
         }
 
         Sort sort;
