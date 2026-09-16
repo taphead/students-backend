@@ -50,7 +50,7 @@ public class StudentService {
         }
 
         if (!ALLOWED_DIRECTION_FIELDS.contains(direction.toLowerCase())) {
-            throw new IllegalArgumentException("Invalid Direction: " + direction);
+            throw new IllegalArgumentException("Invalid Direction Field: " + direction);
         }
 
         Sort sort;

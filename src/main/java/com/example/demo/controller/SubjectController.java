@@ -6,6 +6,7 @@ import com.example.demo.dto.UpdateSubjectDto;
 import com.example.demo.entity.Subject;
 import com.example.demo.service.SubjectService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,12 @@ public class SubjectController {
     }
 
     @GetMapping
-    public List<SubjectResponseDto> getAllSubjects() {
-        return subjectService.getAllSubjects();
+    public Page<SubjectResponseDto> getAllSubjects(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size,
+                                                   @RequestParam(defaultValue = "id") String sortBy,
+                                                   @RequestParam(defaultValue = "asc") String direction) {
+
+        return subjectService.getAllSubjects(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
