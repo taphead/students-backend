@@ -6,6 +6,7 @@ import com.example.demo.dto.UpdateSchoolClassDto;
 import com.example.demo.entity.SchoolClass;
 import com.example.demo.service.SchoolClassService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,13 @@ public class SchoolClassController {
     }
 
     @GetMapping
-    public List<SchoolClassResponseDto> getAllClasses() {
-        return schoolClassService.getAllClasses();
+    public Page<SchoolClassResponseDto> getAllClasses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return schoolClassService.getAllClasses(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")

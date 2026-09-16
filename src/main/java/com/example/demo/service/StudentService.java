@@ -45,7 +45,7 @@ public class StudentService {
             String direction
     ) {
 
-        if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+        if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
             throw new IllegalArgumentException("Invalid Sort Field: " + sortBy);
         }
 

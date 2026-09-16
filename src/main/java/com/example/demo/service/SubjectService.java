@@ -29,7 +29,7 @@ public class SubjectService {
 
     public Page<SubjectResponseDto> getAllSubjects(int page, int size, String sortBy, String direction) {
 
-        if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+        if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
         }
 
