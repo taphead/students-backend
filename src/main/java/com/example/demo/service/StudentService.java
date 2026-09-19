@@ -42,7 +42,8 @@ public class StudentService {
             int page,
             int size,
             String sortBy,
-            String direction
+            String direction,
+            String name
     ) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -62,7 +63,14 @@ public class StudentService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Student> studentPage = studentRepository.findAll(pageable);
+
+        Page<Student> studentPage;
+
+        if (name != null && !name.isEmpty()) {
+            studentPage = studentRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else {
+            studentPage = studentRepository.findAll(pageable);
+        }
 
         return studentPage.map(this::mapToResponseDto);
     }
