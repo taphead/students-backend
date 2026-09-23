@@ -8,10 +8,12 @@ import com.example.demo.entity.Student;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SchoolClassRepository;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.specification.StudentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -43,7 +45,8 @@ public class StudentService {
             int size,
             String sortBy,
             String direction,
-            String name
+            String name,
+            Integer age
     ) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -64,13 +67,19 @@ public class StudentService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Student> studentPage;
+        // cb.conjunction() means essentially: TRUE
+        // So it's an empty/neutral condition that allows us to build up the specification dynamically based on the provided filters.
+        Specification<Student> specification = (root, query, cb) -> cb.conjunction();
 
         if (name != null && !name.isEmpty()) {
-            studentPage = studentRepository.findByNameContainingIgnoreCase(name, pageable);
-        } else {
-            studentPage = studentRepository.findAll(pageable);
+            specification = specification.and(StudentSpecification.hasName(name));
         }
+
+        if (age != null) {
+            specification = specification.and(StudentSpecification.hasAge(age));
+        }
+
+        Page<Student> studentPage = studentRepository.findAll(specification, pageable);
 
         return studentPage.map(this::mapToResponseDto);
     }
