@@ -26,7 +26,10 @@ public class StudentController {
                                                    @RequestParam(defaultValue = "id") String sortBy,
                                                    @RequestParam(defaultValue = "asc") String direction,
                                                    @RequestParam(required = false) String name,
-                                                   @RequestParam(required = false) Integer age) {
+                                                   @RequestParam(required = false) Integer age,
+                                                   @RequestParam(required = false) Integer minAge,
+                                                   @RequestParam(required = false) Integer maxAge,
+                                                   @RequestParam(required = false) Long schoolClassId) {
 
         return studentService.getAllStudents(
                 page,
@@ -34,7 +37,10 @@ public class StudentController {
                 sortBy,
                 direction,
                 name,
-                age
+                age,
+                minAge,
+                maxAge,
+                schoolClassId
         );
     }
 

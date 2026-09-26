@@ -46,7 +46,10 @@ public class StudentService {
             String sortBy,
             String direction,
             String name,
-            Integer age
+            Integer age,
+            Integer minAge,
+            Integer maxAge,
+            Long schoolClassId
     ) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
@@ -77,6 +80,18 @@ public class StudentService {
 
         if (age != null) {
             specification = specification.and(StudentSpecification.hasAge(age));
+        }
+
+        if (minAge != null) {
+            specification = specification.and(StudentSpecification.hasMinAge(minAge));
+        }
+
+        if (maxAge != null) {
+            specification = specification.and(StudentSpecification.hasMaxAge(maxAge));
+        }
+
+        if (schoolClassId != null) {
+            specification = specification.and(StudentSpecification.hasSchoolClassId(schoolClassId));
         }
 
         Page<Student> studentPage = studentRepository.findAll(specification, pageable);

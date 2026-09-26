@@ -11,9 +11,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpecificationExecutor<Student> {
 
-    Page<Student> findByNameContainingIgnoreCase(String name, Pageable pageable);
-
-    // age filter is optional, when user doesn't provide age we want age = null
-    // Integer instead of int to allow null values as int cannot be null
-    Page<Student> findByAge(Integer age, Pageable pageable);
 }

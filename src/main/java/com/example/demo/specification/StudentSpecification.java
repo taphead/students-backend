@@ -17,4 +17,19 @@ public class StudentSpecification {
 
         return (root, query, cb) -> cb.equal(root.get("age"), age);
     }
+
+    public static Specification<Student> hasMinAge(Integer minAge) {
+
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("age"), minAge);
+    }
+
+    public static Specification<Student> hasMaxAge(Integer maxAge) {
+
+        return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("age"), maxAge);
+    }
+
+    public static Specification<Student> hasSchoolClassId(Long schoolClassId) {
+
+        return (root, query, cb) -> cb.equal(root.get("schoolClass").get("id"), schoolClassId);
+    }
 }
