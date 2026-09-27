@@ -9,10 +9,13 @@ import com.example.demo.entity.Subject;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SchoolClassRepository;
 import com.example.demo.repository.SubjectRepository;
+import com.example.demo.specification.SchoolClassSpecification;
+import com.example.demo.specification.StudentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +36,8 @@ public class SchoolClassService {
         this.subjectRepository = subjectRepository;
     }
 
-    public Page<SchoolClassResponseDto> getAllClasses(int page, int size, String sortBy, String direction) {
+    public Page<SchoolClassResponseDto> getAllClasses(int page, int size, String sortBy, String direction, String name,
+                                                      Long id) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
@@ -52,13 +56,25 @@ public class SchoolClassService {
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<SchoolClass> schoolClassPage = schoolClassRepository.findAll(pageable);
+
+        Specification<SchoolClass> specification = (root, query, cb) -> cb.conjunction();
+
+        if (id != null) {
+            specification = specification.and(SchoolClassSpecification.hasId(id));
+        }
+
+        if (name != null && !name.isEmpty()) {
+            specification = specification.and(SchoolClassSpecification.hasName(name));
+        }
+
+        Page<SchoolClass> schoolClassPage = schoolClassRepository.findAll(specification, pageable);
 
         return schoolClassPage.map(this::mapToResponseDto);
     }
 
     public SchoolClassResponseDto getClassById(Long id) {
-        SchoolClass schoolClass = schoolClassRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
+        SchoolClass schoolClass = schoolClassRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
 
         return mapToResponseDto(schoolClass);
     }
@@ -76,7 +92,8 @@ public class SchoolClassService {
 
     public SchoolClassResponseDto updateClass(Long id, UpdateSchoolClassDto dto) {
 
-        SchoolClass schoolClass = schoolClassRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
+        SchoolClass schoolClass = schoolClassRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
 
         List<Subject> subjects = subjectRepository.findAllById(dto.getSubjectIds());
 
@@ -88,7 +105,8 @@ public class SchoolClassService {
 
     public void deleteClass(Long id) {
 
-        SchoolClass schoolClass = schoolClassRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
+        SchoolClass schoolClass = schoolClassRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + id));
 
         schoolClassRepository.delete(schoolClass);
     }

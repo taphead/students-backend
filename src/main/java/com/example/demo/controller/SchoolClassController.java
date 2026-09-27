@@ -28,9 +28,11 @@ public class SchoolClassController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long id) {
 
-        return schoolClassService.getAllClasses(page, size, sortBy, direction);
+        return schoolClassService.getAllClasses(page, size, sortBy, direction, name, id);
     }
 
     @GetMapping("/{id}")
