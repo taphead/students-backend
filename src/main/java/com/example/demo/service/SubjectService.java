@@ -23,13 +23,14 @@ public class SubjectService {
 
     private final SubjectRepository subjectRepository;
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "name");
-    private static final Set<String> ALLOWED_DIRECTION_FIELDS = Set.of("asc",  "desc");
+    private static final Set<String> ALLOWED_DIRECTION_FIELDS = Set.of("asc", "desc");
 
     public SubjectService(SubjectRepository subjectRepository) {
         this.subjectRepository = subjectRepository;
     }
 
-    public Page<SubjectResponseDto> getAllSubjects(int page, int size, String sortBy, String direction, String name) {
+    public Page<SubjectResponseDto> getAllSubjects(int page, int size, String sortBy, String direction, String name,
+                                                   Long id) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
@@ -55,16 +56,18 @@ public class SubjectService {
             specification = specification.and(SubjectSpecification.hasName(name));
         }
 
+        if (id != null) {
+            specification = specification.and(SubjectSpecification.hasId(id));
+        }
+
         Page<Subject> subjectPage = subjectRepository.findAll(specification, pageable);
 
         return subjectPage.map(this::mapToResponseDto);
     }
 
     public SubjectResponseDto getSubjectById(Long id) {
-        Subject subject = subjectRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Subject not found with id: " + id));
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + id));
 
         return mapToResponseDto(subject);
     }
@@ -82,8 +85,7 @@ public class SubjectService {
     public SubjectResponseDto updateSubject(Long id, UpdateSubjectDto dto) {
 
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Subject not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + id));
 
         subject.setName(dto.getName());
 
@@ -94,22 +96,16 @@ public class SubjectService {
     public void deleteSubject(Long id) {
 
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Subject not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + id));
 
         subjectRepository.delete(subject);
     }
 
-    private SubjectResponseDto mapToResponseDto(
-            Subject subject
-    ) {
+    private SubjectResponseDto mapToResponseDto(Subject subject) {
 
-        List<Long> classIds =
-                subject
-                        .getClasses()
-                        .stream()
-                        .map(SchoolClass::getId)    // schoolClass -> schoolClass.getId()
-                        .toList();
+        List<Long> classIds = subject.getClasses().stream()
+                .map(SchoolClass::getId)    // schoolClass -> schoolClass.getId()
+                .toList();
 
 
         return new SubjectResponseDto(
@@ -118,7 +114,6 @@ public class SubjectService {
 
                 subject.getName(),
 
-                classIds
-        );
+                classIds);
     }
 }

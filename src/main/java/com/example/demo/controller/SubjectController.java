@@ -28,9 +28,10 @@ public class SubjectController {
                                                    @RequestParam(defaultValue = "10") int size,
                                                    @RequestParam(defaultValue = "id") String sortBy,
                                                    @RequestParam(defaultValue = "asc") String direction,
-                                                   @RequestParam(required = false) String name) {
+                                                   @RequestParam(required = false) String name,
+                                                   @RequestParam(required = false) Long id) {
 
-        return subjectService.getAllSubjects(page, size, sortBy, direction, name);
+        return subjectService.getAllSubjects(page, size, sortBy, direction, name, id);
     }
 
     @GetMapping("/{id}")

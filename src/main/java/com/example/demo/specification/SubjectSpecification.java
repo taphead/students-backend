@@ -9,4 +9,9 @@ public class SubjectSpecification {
 
         return (root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
     }
+
+    public static Specification<Subject> hasId(Long id) {
+
+        return (root, query, cb) -> cb.equal(root.get("id"), id);
+    }
 }
