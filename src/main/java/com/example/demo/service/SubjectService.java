@@ -7,10 +7,12 @@ import com.example.demo.entity.SchoolClass;
 import com.example.demo.entity.Subject;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.SubjectRepository;
+import com.example.demo.specification.SubjectSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class SubjectService {
         this.subjectRepository = subjectRepository;
     }
 
-    public Page<SubjectResponseDto> getAllSubjects(int page, int size, String sortBy, String direction) {
+    public Page<SubjectResponseDto> getAllSubjects(int page, int size, String sortBy, String direction, String name) {
 
         if (!ALLOWED_SORT_FIELDS.contains(sortBy.toLowerCase())) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
@@ -47,7 +49,13 @@ public class SubjectService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Subject> subjectPage = subjectRepository.findAll(pageable);
+        Specification<Subject> specification = (root, query, cb) -> cb.conjunction();
+
+        if (name != null && !name.isEmpty()) {
+            specification = specification.and(SubjectSpecification.hasName(name));
+        }
+
+        Page<Subject> subjectPage = subjectRepository.findAll(specification, pageable);
 
         return subjectPage.map(this::mapToResponseDto);
     }
