@@ -101,14 +101,14 @@ public class StudentService {
 
     public StudentResponseDto getStudentById(Long id) {
 
-        Student student = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
         return mapToResponseDto(student);
     }
 
     public StudentResponseDto createStudent(CreateStudentDto dto) {
 
-        SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId()).orElseThrow(() -> new RuntimeException("School class not found with id: " + dto.getSchoolClassId()));
+        SchoolClass schoolClass = schoolClassRepository.findById(dto.getSchoolClassId()).orElseThrow(() -> new ResourceNotFoundException("School class not found with id: " + dto.getSchoolClassId()));
 
 
         Student student = new Student();

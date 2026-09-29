@@ -13,6 +13,7 @@ public class UpdateStudentDto {
     @NotBlank(message = "Email is required")
     private String email;
 
+    @NotNull(message = "Age is required")
     @Min(value = 1, message = "Age must be greater than 0")
     private Integer age;
 

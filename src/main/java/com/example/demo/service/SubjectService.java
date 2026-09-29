@@ -43,9 +43,9 @@ public class SubjectService {
         Sort sort;
 
         if (direction.equalsIgnoreCase("desc")) {
-            sort = Sort.by(sortBy).descending();
+            sort = Sort.by(sortBy.toLowerCase()).descending();
         } else {
-            sort = Sort.by(sortBy).ascending();
+            sort = Sort.by(sortBy.toLowerCase()).ascending();
         }
 
         Pageable pageable = PageRequest.of(page, size, sort);
